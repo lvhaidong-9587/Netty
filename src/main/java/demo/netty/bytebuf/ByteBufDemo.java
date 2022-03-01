@@ -5,22 +5,14 @@ import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 /**
  * @author: lhd
  * Date: 2022/3/1 0001 13:10
  * Description: netty byteBuf读取demo
  */
-public class ReadDemo {
+public class ByteBufDemo {
 
-    public static void main(String[] args) {
-        ReadDemo readDemo = new ReadDemo();
-        //写内容
-        ByteBuf byteBuf = readDemo.writeByteBuf(" hello,word ");
-        //读取复合缓冲区
-        readDemo.readComBuf(byteBuf);
-    }
 
     /**
      * 遍历读取ByteBuf内容
