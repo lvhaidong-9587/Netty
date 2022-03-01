@@ -18,10 +18,6 @@ public class ReadDemo {
         ReadDemo readDemo = new ReadDemo();
         //写内容
         ByteBuf byteBuf = readDemo.writeByteBuf(" hello,word ");
-        //遍历
-        readDemo.readByteBuf(byteBuf);
-        //转换为String
-        readDemo.readByteBufString(byteBuf);
         //读取复合缓冲区
         readDemo.readComBuf(byteBuf);
     }
@@ -53,13 +49,12 @@ public class ReadDemo {
     public void readComBuf(ByteBuf buf){
         //读取数据
         CompositeByteBuf compBuf = (CompositeByteBuf) buf;
-        //获取数据长度
-        int length = compBuf.readableBytes();
-        //创建byte数组，并初始化大小
-        byte[] bytes = new byte[length];
-        //从读索引开始读取byte[]大小长度的字符到byte数组
-        compBuf.getBytes(compBuf.readerIndex(),bytes);
-        System.out.println(Arrays.toString(bytes));
+        //删除头部组件
+        compBuf.removeComponent(0);
+        //遍历获取组件
+        for(int i = 0;i< compBuf.numComponents();i++){
+            System.out.println(compBuf.component(i).toString(StandardCharsets.UTF_8));
+        }
     }
 
     /**
@@ -79,9 +74,7 @@ public class ReadDemo {
         while (body.writableBytes() >= 4){
             body.writeBytes(i.getBytes(StandardCharsets.UTF_8));
         }
-        System.out.println("bodyBuf: "+ body.toString(StandardCharsets.UTF_8));
         compositeByteBuf.addComponents(header, body);
-        System.out.println(compositeByteBuf.readableBytes());
         return compositeByteBuf;
     }
 
