@@ -3,6 +3,7 @@ package demo.netty;
 import demo.netty.bytebuf.readOrWrite.ByteBufReadOrWriteDemo;
 import demo.netty.bytebuf.select.ByteBufSelectDemo;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.nio.charset.StandardCharsets;
 
@@ -17,13 +18,8 @@ public class Main {
    public static ByteBufSelectDemo bufSelectDemo = new ByteBufSelectDemo();
 
     public static void main(String[] args) {
-        ByteBuf byteBuf = byteBufReadOrWriteDemo.writeByteBuf("ok \r");
-        //读取复合缓冲区
-        byteBufReadOrWriteDemo.readComBuf(byteBuf);
-        int i = bufSelectDemo.selectCr(byteBuf);
-        System.out.println(i);
-//        ByteBuf buf = byteBufReadOrWriteDemo.readIndex(byteBuf,i);
-//        byteBufReadOrWriteDemo.readByteBufString(buf);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer("ok".getBytes(StandardCharsets.UTF_8));
+        byteBufReadOrWriteDemo.copySetByteBuf(byteBuf,0,1);
     }
 
     /**

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -65,10 +64,10 @@ public class ByteBufReadOrWriteDemo {
         CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();
         // 假设一条消息由 header 和 body 两部分组成，headerBuf 和 bodyBuf 可以使用 堆缓存区 或者 直接缓存区
         //堆缓存区
-        ByteBuf header = Unpooled.buffer(4, 1024);
+        ByteBuf header = Unpooled.buffer( i.length());
         //直接缓存区
-        ByteBuf body = Unpooled.directBuffer(4, 1024);
-        while (body.writableBytes() >= 4) {
+        ByteBuf body = Unpooled.directBuffer(i.length());
+        while (body.writableBytes() >= i.length()) {
             body.writeBytes(i.getBytes(StandardCharsets.UTF_8));
         }
         compositeByteBuf.addComponents(header, body);
@@ -95,5 +94,57 @@ public class ByteBufReadOrWriteDemo {
     public ByteBuf writeIndex(ByteBuf buf,int i){
         return buf.writerIndex(i);
     }
+
+    /**
+     * 缓冲区复制，缓冲区是一个专门展示ByteBuf内容的视图，无参
+     * @param buf 将要被复制的缓存器
+     * @return 复制的缓存器
+     */
+    public ByteBuf copyByteBuf(ByteBuf buf){
+        return buf.copy();
+    }
+
+    /**
+     * 缓冲区复制，缓冲区是一个专门展示ByteBuf内容的视图，带参
+     * @param buf 将要被复制的缓存器
+     * @param a 开始复制位置，包括
+     * @param b 结束复制位置，不包括
+     * @return 复制的缓存器
+     */
+    public ByteBuf copyByteBuf(ByteBuf buf ,int a,int b){
+        return buf.copy(a,b);
+    }
+
+    /**
+     * 缓冲区复制并修改（数据共享，参照上面方法，该方法也可不带参）
+     * @param buf 缓冲区
+     * @param a 起始点
+     * @param b 终点
+     */
+    public void sliceByteBuf(ByteBuf buf,int a,int b){
+        ByteBuf byteBuf = buf.slice(a,b);
+        buf.setByte(0,(byte)'O');
+        //这里的数据是共享的，所以修改后在其他地方也可见
+        if(buf.getByte(0) == byteBuf.getByte(0)){
+            System.out.println("buf 和 byteBuf 相同");
+        }
+    }
+
+    /**
+     * 缓冲区复制并修改（不共享数据）
+     * @param buf 缓冲区
+     * @param a 起始点
+     * @param b 终止点
+     */
+    public void copySetByteBuf(ByteBuf buf,int a,int b){
+        ByteBuf byteBuf = buf.copy(a,b);
+        byteBuf.setByte(0,(byte)'O');
+        //这里的数据是不共享的，所以修改后在其他地方不可见
+        if(buf.getByte(0) != byteBuf.getByte(0)){
+            System.out.println("buf 和 byteBuf 不相同");
+        }
+    }
+
+
 
 }

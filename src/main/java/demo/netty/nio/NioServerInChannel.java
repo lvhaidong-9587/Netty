@@ -32,5 +32,11 @@ public class NioServerInChannel extends ChannelInboundHandlerAdapter {
                channelFuture.cause().printStackTrace();
            }
        });
+
+       //获取池类 ByteBufAllocator
+//        ctx.alloc();
+//        ctx.channel().alloc();
+        //获取netty引用计数器,数值为0时释放该实例
+//        ctx.alloc().directBuffer();
     }
 }
