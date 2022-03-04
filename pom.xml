@@ -57,6 +57,12 @@
             <version>1.18.22</version>
             <optional>true</optional>
         </dependency>
+        <!--单元测试-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
     </dependencies>
 
 </project>
