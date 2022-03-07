@@ -29,9 +29,16 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        //如果该事件握手成功，则将 HttpRequest-Handler 从 ChannelPipeline 中移除，因为这个时候已经不会接收 Http 消息了
         if(evt == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE){
-
+            ctx.pipeline().remove(HttpRequestHandler.class);//ctx.pipeline() 和 ctx.channel().pipeline()的区别
+            //通知所有已经连接的 WebSocket 客户端，新的客户端已经连接上了
+            channelGroup.writeAndFlush(new TextWebSocketFrame(
+                    "client "+ctx.channel()+" joined"));
+            //将新的 WebSocket Channel 添加到 ChannelGroup 中，以便他可以接收所有的消息
+            channelGroup.add(ctx.channel());
+        }else {
+            super.userEventTriggered(ctx, evt);
         }
-        super.userEventTriggered(ctx, evt);
     }
 }
