@@ -19,6 +19,6 @@ public class DefaultSpdyOrHttpChooser extends ApplicationProtocolNegotiationHand
 
     @Override
     protected void configurePipeline(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-         
+
     }
 }

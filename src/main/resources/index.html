@@ -23,14 +23,14 @@
             log.append(msg + " \n").scrollTop(log[0].scrollHeight - log.height());
         }
         $(function () {
-            $('#url').val((location.protocol.indexOf('https') === -1 ? 'ws://' : 'wss://') + location.host + '/ws')
+            $('#url').val((location.protocol.indexOf('https') == -1 ? 'ws://' : 'wss://') + location.host + '/ws')
 
             if (!WebSocket) {
                 $('#not-supported').show()
             } else {
                 var ws = null
                 $('#connect').click(function () {
-                    if (ws == null || ws.readyState !== 1) {
+                    if (ws == null || ws.readyState != 1) {
                         ws = new WebSocket($('#url').val())
 
                         ws.onerror = function (e) {
