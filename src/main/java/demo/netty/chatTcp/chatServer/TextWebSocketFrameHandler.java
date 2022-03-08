@@ -1,10 +1,9 @@
-package demo.netty.chat.chatServer;
+package demo.netty.chatTcp.chatServer;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketCloseStatus;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 
 /**
@@ -31,7 +30,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         //如果该事件握手成功，则将 HttpRequest-Handler 从 ChannelPipeline 中移除，因为这个时候已经不会接收 Http 消息了
         if(evt == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE){
-            ctx.pipeline().remove(HttpRequestHandler.class);//ctx.pipeline() 和 ctx.channel().pipeline()的区别
+            ctx.pipeline().remove(HttpRequestHandler.class);
             //通知所有已经连接的 WebSocket 客户端，新的客户端已经连接上了
             channelGroup.writeAndFlush(new TextWebSocketFrame(
                     "client "+ctx.channel()+" joined"));

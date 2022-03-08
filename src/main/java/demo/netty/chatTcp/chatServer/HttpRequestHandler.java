@@ -1,10 +1,9 @@
-package demo.netty.chat.chatServer;
+package demo.netty.chatTcp.chatServer;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedNioFile;
-import io.netty.handler.stream.ChunkedStream;
 
 import java.io.File;
 import java.io.RandomAccessFile;
