@@ -26,7 +26,7 @@ public class LogEventHandler extends SimpleChannelInboundHandler<LogEvent> {
         builder.append("] : ");
         builder.append(logEvent.getMsg());
         //打印 LogEvent 的数据
-        System.out.println(builder.toString());
+        System.out.println("广播内容： "+builder);
     }
 
     @Override

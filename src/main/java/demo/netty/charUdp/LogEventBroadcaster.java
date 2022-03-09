@@ -1,7 +1,6 @@
 package demo.netty.charUdp;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -9,6 +8,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 
 /**
@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
  *
  * @author: lhd
  * 2022/3/8 0008 17:03
- * Description: logEvent服务引导程序
+ * Description: logEvent广播器
  */
 public class LogEventBroadcaster {
     private final EventLoopGroup eventLoopGroup;
@@ -30,7 +30,7 @@ public class LogEventBroadcaster {
                 //引导该 NioDatagramChannel（无连接的）
                 .channel(NioDatagramChannel.class)
                 //保活
-                .option(ChannelOption.SO_KEEPALIVE,true)
+                .option(ChannelOption.SO_BROADCAST,true)
                 .handler(new LogEventEncoder(address));
         this.file = file;
     }
@@ -48,8 +48,36 @@ public class LogEventBroadcaster {
                 //如果有必要，将文件指针设置到该文件的最后一个字节
                 pointer = len;
             }else if(len > pointer){
-                
+                //添加内容
+                RandomAccessFile randomAccessFile = new RandomAccessFile(file,"r");
+                //设置当前文件的指针，这样不会把旧的发出去
+                randomAccessFile.seek(pointer);
+                String line;
+                while ((line = randomAccessFile.readLine()) != null){
+                    //写一个 LogEvent 到管道用于保存文件名和文件实体。(我们期望每个日志实体是一行长度)
+                    channel.writeAndFlush(new LogEvent(null,-1, file.getAbsolutePath(), line));
+                }
+                //存储当前文件的位置，这样，我们可以稍后继续
+                pointer = randomAccessFile.getFilePointer();
+                randomAccessFile.close();
             }
+
         }
     }
+
+    public void stop(){
+        eventLoopGroup.shutdownGracefully();
+    }
+
+    public static void start() throws Exception {
+        LogEventBroadcaster broadcaster = new LogEventBroadcaster(
+                new InetSocketAddress("255.255.255.255",8080),
+                new File("index.html"));
+        broadcaster.run();
+    }
+
+    public static void main(String[] args) throws Exception {
+        start();
+    }
+
 }
